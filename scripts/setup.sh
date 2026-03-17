@@ -19,10 +19,10 @@ echo "[2/6] Installing basic tools..."
 sudo apt install -y curl git build-essential
 
 # -------------------------------
-# 3. Install Node.js (v18 LTS)
+# 3. Install Node.js (v20 LTS)
 # -------------------------------
-echo "[3/6] Installing Node.js..."
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+echo "[3/6] Installing Node.js 20..."
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
 
 # Verify installation
