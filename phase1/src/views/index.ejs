@@ -17,29 +17,26 @@
   <div style="padding:10px; display:flex; flex-wrap:wrap; gap:15px">
 
     <% products.forEach(function(p){ %>
+  <div class="product-item" data-id="<%= p.id %>" data-image="<%= p.imageUrl || '' %>" style="flex: 0 0 300px; border:1px solid #ff99cc; padding:5px; text-align:center">
+    
+    <img 
+      src="<%= p.imageUrl && p.imageUrl.length ? p.imageUrl : '/images/placeholder-80.png' %>" 
+      style="width:280px;height:280px;object-fit:cover">
 
-      <div style="flex: 0 0 300px; border:1px solid #ff99cc; padding:5px; text-align:center">
+    <div class="product-name"><%= p.name %></div>
+    <div class="product-price">$<%= p.price %></div>
+    <div class="product-description" style="font-size:19px; color:#5c5ca4">
+      <%= p.description || '' %>
+    </div>
+    <div class="product-color" style="display:none;"><%= p.color %></div>
 
-        <img 
-          src="<%= p.imageUrl && p.imageUrl.length ? p.imageUrl : '/images/placeholder-80.png' %>" 
-          style="width:280px;height:280px;object-fit:cover">
+    <div style="margin-top:5px">
+      <button class="btn-edit">Edit</button>
+      <button class="btn-delete">Delete</button>
+    </div>
 
-        <div class="product-title"><%= p.name %></div>
-
-        <div class="price">$<%= p.price %></div>
-
-        <div style="font-size:19px; color:#5c5ca4">
-          <%= p.description || '' %>
-        </div>
-
-        <div style="margin-top:5px">
-          <button class="btn-edit">Edit</button>
-          <button class="btn-delete">Delete</button>
-        </div>
-
-      </div>
-
-    <% }) %>
+  </div>
+<% }) %>
 
   </div>
 </div>
