@@ -13,17 +13,26 @@ document.addEventListener('DOMContentLoaded', function () {
     modal.show();
   }
 
-  function openModalForEdit(row) {
+  function openModalForEdit(productDiv) {
     document.getElementById('modalTitle').textContent = 'Edit Product';
-    const id = row.dataset.id;
+    const id = productDiv.dataset.id;
     document.getElementById('product-id').value = id;
-    const cols = row.querySelectorAll('td');
-    // columns: 0=thumb,1=name,2=price,3=color,4=description
-    document.getElementById('name').value = cols[1].textContent.trim();
-    document.getElementById('price').value = cols[2].textContent.trim();
-    document.getElementById('color').value = cols[3].textContent.trim();
-    document.getElementById('description').value = cols[4].textContent.trim();
-    const existingImage = row.dataset.image || '';
+    
+    // Lấy dữ liệu từ các phần tử trong productDiv
+    const nameEl = productDiv.querySelector('.product-name');
+    const priceEl = productDiv.querySelector('.product-price');
+    const colorEl = productDiv.querySelector('.product-color');
+    const descEl = productDiv.querySelector('.product-description');
+    
+    document.getElementById('name').value = nameEl ? nameEl.textContent.trim() : '';
+    // Bỏ dấu $ ở price nếu có
+    let price = priceEl ? priceEl.textContent.trim() : '';
+    price = price.replace('$', '');
+    document.getElementById('price').value = price;
+    document.getElementById('color').value = colorEl ? colorEl.textContent.trim() : '';
+    document.getElementById('description').value = descEl ? descEl.textContent.trim() : '';
+    
+    const existingImage = productDiv.dataset.image || '';
     document.getElementById('img-preview').src = existingImage && existingImage.length ? existingImage : '/images/placeholder-80.png';
     document.getElementById('imageUrl').value = existingImage || '';
     modal.show();
@@ -31,16 +40,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
   btnAdd.addEventListener('click', openModalForAdd);
 
-  document.getElementById('product-table').addEventListener('click', function (e) {
-    const tr = e.target.closest('tr');
-    if (!tr) return;
+  // Thay vì lắng nghe trên product-table, lắng nghe trên container chứa các product-item
+  document.querySelector('.box div[style*="display:flex"]').addEventListener('click', function (e) {
+    const productDiv = e.target.closest('.product-item');
+    if (!productDiv) return;
+    
     if (e.target.classList.contains('btn-edit')) {
-      openModalForEdit(tr);
+      openModalForEdit(productDiv);
     } else if (e.target.classList.contains('btn-delete')) {
-      const id = tr.dataset.id;
+      const id = productDiv.dataset.id;
       if (confirm('Delete this product?')) {
         fetch(`/products/${id}`, { method: 'DELETE' }).then(r => {
-          if (r.ok) location.reload(); else r.json().then(j => alert(j.message || 'Delete failed'));
+          if (r.ok) {
+            productDiv.remove(); // Xóa trực tiếp phần tử thay vì reload
+            // Hoặc nếu muốn reload: location.reload();
+          } else {
+            r.json().then(j => alert(j.message || 'Delete failed'));
+          }
         }).catch(() => alert('Delete failed'));
       }
     }
