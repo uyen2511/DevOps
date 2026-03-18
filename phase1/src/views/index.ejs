@@ -1,40 +1,76 @@
 <%- include('partials/head') %>
 
+<div class="bg-decor">
+  <img src="http://dl4.glitter-graphics.net/pub/1408/1408224eogtn9822i.gif">
+  <img src="http://dl5.glitter-graphics.net/pub/1496/1496195us5rk2si5m.gif">
+  <img src="http://dl4.glitter-graphics.net/pub/1105/1105834cme1lwaolq.gif">
+  <img src="http://dl5.glitter-graphics.net/pub/2019/2019905skwi424p39.gif">
+</div>
+
   <div class="mb-3 d-flex justify-content-end">
     <button id="btn-add" class="btn btn-primary btn-sm">Add Product</button>
   </div>
 
-  <div class="table-responsive">
-    <table class="table table-striped table-bordered align-middle">
-      <thead class="table-dark">
-        <tr>
-          <th style="width:80px">Photo</th>
-          <th>Name</th>
-          <th>Price</th>
-          <th>Color</th>
-          <th>Description</th>
-          <th style="width:140px">Actions</th>
-        </tr>
-      </thead>
-      <tbody id="product-table">
-        <% products.forEach(function(p){ %>
-          <tr data-id="<%= p.id %>" data-image="<%= p.imageUrl || '' %>">
-            <td>
-              <img src="<%= p.imageUrl && p.imageUrl.length ? p.imageUrl : '/images/placeholder-80.png' %>" alt="thumb" class="img-thumbnail" style="width:60px;height:60px;object-fit:cover">
-            </td>
-            <td><%= p.name %></td>
-            <td><%= p.price %></td>
-            <td><%= p.color %></td>
-            <td><%= p.description || '' %></td>
-            <td>
-              <button class="btn btn-sm btn-outline-secondary btn-edit">Edit</button>
-              <button class="btn btn-sm btn-outline-danger btn-delete">Delete</button>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
+<div class="box">
+  <div class="box-header">🍎 Apple Products</div>
+
+  <div style="padding:10px; display:flex; flex-wrap:wrap; gap:15px">
+
+    <% products.forEach(function(p){ %>
+
+      <div style="flex: 0 0 300px; border:1px solid #ff99cc; padding:5px; text-align:center">
+
+        <img 
+          src="<%= p.imageUrl && p.imageUrl.length ? p.imageUrl : '/images/placeholder-80.png' %>" 
+          style="width:280px;height:280px;object-fit:cover">
+
+        <div class="product-title"><%= p.name %></div>
+
+        <div class="price">$<%= p.price %></div>
+
+        <div style="font-size:19px; color:#5c5ca4">
+          <%= p.description || '' %>
+        </div>
+
+        <div style="margin-top:5px">
+          <button class="btn-edit">Edit</button>
+          <button class="btn-delete">Delete</button>
+        </div>
+
+      </div>
+
+    <% }) %>
+
   </div>
+</div>
+
+  <!-- Left Sidebar -->
+   <div class="box">
+  <div class="box-header">Store Info</div>
+  <div style="padding:5px">
+    🍎 Brand: Apple <br>
+    📦 Items: <%= products.length %> <br>
+    💾 Source: <%= source %>
+  </div>
+</div>
+
+  <!-- Right Sidebar -->
+<div class="box">
+  <div class="box-header">🔥 Hot Deals</div>
+  <div style="padding:5px">
+    💻 MacBook Sale <br>
+    📱 iPhone Discount <br>
+    🎧 AirPods Promo
+  </div>
+</div>
+
+<div class="box">
+  <div class="box-header">✨ Featured</div>
+  <div style="padding:5px; text-align:center">
+    <img src="/images/ip16pro.JPG" style="width:450px;height:450px;object-fit:cover;"><br>
+    iPhone Pro 💖
+  </div>
+</div>
 
   <!-- Modal Form -->
   <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
