@@ -14,63 +14,70 @@ function createAppleProducts() {
       price: 1099,
       color: 'space-black',
       description: '6.7‑inch Super Retina XDR display, A16 Bionic chip, pro camera system.',
-      imageUrl: ''
+      imageUrl: '/images/ip14pro.JPG'
     },
     {
       name: 'iPhone SE (3rd generation)',
       price: 429,
       color: 'black',
       description: 'Compact design with A15 Bionic, great value for everyday use.',
-      imageUrl: ''
+      imageUrl: '/images/ipse.JPG'
     },
     {
       name: 'MacBook Pro 14-inch (M2 Pro)',
       price: 1999,
       color: 'silver',
-      description: 'Powerful M2 Pro chip, Liquid Retina XDR display, up to 18‑hour battery life.'
+      description: 'Powerful M2 Pro chip, Liquid Retina XDR display, up to 18‑hour battery life.',
+      imageUrl: '/images/macpro.JPG'
     },
     {
       name: 'MacBook Air 13-inch (M2)',
       price: 1199,
       color: 'midnight',
-      description: 'Thin and light with M2 chip, silent fanless design and great battery life.'
+      description: 'Thin and light with M2 chip, silent fanless design and great battery life.',
+      imageUrl: '/images/macair.JPG'
     },
     {
       name: 'iPad Pro 11-inch (M4)',
       price: 799,
       color: 'silver',
-      description: 'M4 chip, Liquid Retina display with ProMotion, powerful for creative work.'
+      description: 'M4 chip, Liquid Retina display with ProMotion, powerful for creative work.',
+      imageUrl: '/images/ipadpro.JPG'
     },
     {
       name: 'Apple Watch Series 9',
       price: 399,
       color: 'starlight',
-      description: 'Faster S9 chip, more accurate sensors, and brighter display.'
+      description: 'Faster S9 chip, more accurate sensors, and brighter display.',
+      imageUrl: '/images/watch.JPG'
     },
     {
       name: 'AirPods Pro (2nd generation)',
       price: 249,
       color: 'white',
-      description: 'Active Noise Cancellation, improved audio quality and longer battery.'
+      description: 'Active Noise Cancellation, improved audio quality and longer battery.',
+      imageUrl: '/images/airpodpro.JPG'
     },
     {
       name: 'HomePod (2nd generation)',
       price: 299,
       color: 'white',
-      description: 'High-fidelity audio with computational audio and Siri smart home control.'
+      description: 'High-fidelity audio with computational audio and Siri smart home control.',
+      imageUrl: '/images/homepod.JPG'
     },
     {
       name: 'iPhone 13',
       price: 699,
       color: 'blue',
-      description: 'A great all-rounder with excellent battery life and dual-camera system.'
+      description: 'A great all-rounder with excellent battery life and dual-camera system.',
+      imageUrl: '/images/ip13.JPG'
     },
     {
       name: 'iPad (10th generation)',
       price: 449,
       color: 'pink',
       description: 'Updated design, larger display, and capable for school and home use.',
-      imageUrl: ''
+      imageUrl: '/images/ipad.JPG'
     }
   ];
 
