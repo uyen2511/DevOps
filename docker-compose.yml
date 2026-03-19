@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: devops-mongodb
+    restart: unless-stopped
+    environment:
+      - MONGO_URI=mongodb://admin:secret@mongodb:27017/devops?authSource=admin
+      - PORT=3000
+      - NODE_ENV=production
+      #- MONGO_INITDB_ROOT_USERNAME: admin
+      #- MONGO_INITDB_ROOT_PASSWORD: secret
+      #- MONGO_INITDB_DATABASE: devops
+    volumes:
+      - mongodb_data:/data/db
+      - ./backups:/backups
+    networks:
+      - app-network
+
+  web:
+    image: pupu2005/devops-app:latest
+    container_name: devops-web
+    restart: unless-stopped
+    ports:
+      - "8080:3000"
+    environment:
+      - MONGO_URI=mongodb+srv://devops:devops123@cluster0.tdzyvc5.mongodb.net/products_db
+      - PORT=3000
+      #- MONGO_URI=mongodb://admin:secret@mongodb:27017/devops?authSource=admin
+      #- PORT=3000
+      #- NODE_ENV=production
+    env_file:
+      - .env
+    volumes:
+      - ./phase1/src/public/uploads:/app/phase1/src/public/uploads
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  app-network:
+    driver: bridge
