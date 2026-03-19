@@ -1,14 +1,15 @@
 #!/bin/bash
 # ============================================
-# setup.sh - Complete Server Setup Script
-# Phase 1 - Midterm Project
+# 🚀 SETUP SCRIPT - PHASE 1 (FIXED PATH)
 # ============================================
 
-# ------------------------------------
-# Configuration
-# ------------------------------------
+# =======================
+# CONFIG
+# =======================
 APP_USER="$USER"
-APP_DIR="/home/$APP_USER/app"
+BASE_DIR="/home/$APP_USER/DevOps"
+APP_DIR="$BASE_DIR/phase1"
+SRC_DIR="$APP_DIR/src"
 LOG_FILE="/tmp/setup-$(date +%Y%m%d-%H%M%S).log"
 
 # Colors
@@ -17,79 +18,70 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-# ------------------------------------
-# Helper functions
-# ------------------------------------
-print_info() { echo -e "${GREEN}[INFO]${NC} $1"; }
-print_step() { echo -e "${BLUE}[STEP]${NC} $1"; }
+print_info()  { echo -e "${GREEN}[INFO]${NC} $1"; }
+print_step()  { echo -e "\n${BLUE}▶ $1${NC}"; }
 print_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
-# ------------------------------------
-# Check system
-# ------------------------------------
+# =======================
+# CHECK SYSTEM
+# =======================
 check_system() {
     print_step "Checking system..."
 
-    if [ ! -f /etc/os-release ] || ! grep -qi "ubuntu" /etc/os-release; then
-        print_error "Only Ubuntu is supported"
+    if ! grep -qi "ubuntu" /etc/os-release; then
+        print_error "Only Ubuntu supported"
         exit 1
     fi
 
-    if ! ping -c 1 google.com > /dev/null 2>&1; then
-        print_error "No internet connection"
+    if ! ping -c 1 google.com &>/dev/null; then
+        print_error "No internet"
         exit 1
     fi
 
     print_info "System OK"
 }
 
-# ------------------------------------
-# Update system
-# ------------------------------------
+# =======================
+# UPDATE
+# =======================
 update_system() {
     print_step "Updating system..."
     sudo apt update -y >> "$LOG_FILE" 2>&1
     sudo apt upgrade -y >> "$LOG_FILE" 2>&1
-    print_info "System updated"
 }
 
-# ------------------------------------
-# Install basic tools
-# ------------------------------------
+# =======================
+# BASIC TOOLS
+# =======================
 install_basic_tools() {
-    print_step "Installing basic tools..."
+    print_step "Installing tools..."
     sudo apt install -y curl git build-essential wget ca-certificates gnupg >> "$LOG_FILE" 2>&1
-    print_info "Basic tools installed"
 }
 
-# ------------------------------------
-# Install Node.js
-# ------------------------------------
+# =======================
+# NODEJS
+# =======================
 install_nodejs() {
-    print_step "Installing Node.js 20 LTS..."
+    print_step "Installing Node.js..."
     curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - >> "$LOG_FILE" 2>&1
     sudo apt install -y nodejs >> "$LOG_FILE" 2>&1
 
     print_info "Node: $(node -v)"
-    print_info "npm: $(npm -v)"
 }
 
-# ------------------------------------
-# Install Nginx
-# ------------------------------------
+# =======================
+# NGINX
+# =======================
 install_nginx() {
     print_step "Installing Nginx..."
     sudo apt install -y nginx >> "$LOG_FILE" 2>&1
-
-    sudo systemctl start nginx
     sudo systemctl enable nginx
-
-    print_info "Nginx running"
+    sudo systemctl start nginx
 }
 
-# ------------------------------------
-# Install MongoDB (dynamic Ubuntu version)
-# ------------------------------------
+# =======================
+# MONGODB
+# =======================
 install_mongodb() {
     print_step "Installing MongoDB..."
 
@@ -105,125 +97,55 @@ https://repo.mongodb.org/apt/ubuntu $UBUNTU_CODENAME/mongodb-org/6.0 multiverse"
     sudo apt update -y >> "$LOG_FILE" 2>&1
     sudo apt install -y mongodb-org >> "$LOG_FILE" 2>&1
 
-    sudo systemctl start mongod
     sudo systemctl enable mongod
-
-    print_info "MongoDB installed"
+    sudo systemctl start mongod
 }
 
-# ------------------------------------
-# Install PM2
-# ------------------------------------
+# =======================
+# PM2
+# =======================
 install_pm2() {
     print_step "Installing PM2..."
     sudo npm install -g pm2 >> "$LOG_FILE" 2>&1
 
     pm2 startup systemd -u $APP_USER --hp /home/$APP_USER >> "$LOG_FILE" 2>&1
-
-    print_info "PM2: $(pm2 --version)"
 }
 
-# ------------------------------------
-# Create directories
-# ------------------------------------
-create_directories() {
-    print_step "Creating directories..."
-
-    mkdir -p "$APP_DIR"/{logs,uploads,data,temp,config}
-
-    chmod -R 755 "$APP_DIR"
-
-    print_info "App dir: $APP_DIR"
-}
-
-# ------------------------------------
-# Create config templates
-# ------------------------------------
-create_config_templates() {
-    print_step "Creating config templates..."
-
-    cat > "$APP_DIR/config/.env.example" << EOF
-PORT=3000
-NODE_ENV=production
-MONGO_URI=mongodb://localhost:27017/products_db
-SESSION_SECRET=change-this
-EOF
-
-    cat > "$APP_DIR/config/ecosystem.config.js" << EOF
-module.exports = {
-  apps: [{
-    name: 'product-app',
-    script: 'main.js',
-    cwd: '$APP_DIR',
-    instances: 1,
-    autorestart: true,
-    max_memory_restart: '500M',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3000
-    }
-  }]
-};
-EOF
-
-    cat > "$APP_DIR/config/nginx.conf" << EOF
-server {
-    listen 80;
-    server_name your-domain.com;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-    }
-
-    location /uploads {
-        alias $APP_DIR/uploads;
-    }
-}
-EOF
-
-    print_info "Config templates created"
-}
-
-# ------------------------------------
-# Optional: Install project deps
-# ------------------------------------
+# =======================
+# INSTALL DEPENDENCIES
+# =======================
 install_project_deps() {
-    print_step "Checking for project..."
+    print_step "Installing project dependencies..."
 
-    if [ -f "$APP_DIR/package.json" ]; then
-        print_step "Installing dependencies..."
-        cd "$APP_DIR" || exit
-        npm ci --only=production >> "$LOG_FILE" 2>&1
+    if [ -f "$BASE_DIR/package.json" ]; then
+        cd "$BASE_DIR" || exit
+        npm install >> "$LOG_FILE" 2>&1
         print_info "Dependencies installed"
     else
-        print_info "No project found → skip npm install"
+        print_error "package.json not found in DevOps/"
     fi
 }
 
-# ------------------------------------
-# Verify
-# ------------------------------------
-verify() {
-    print_step "Verifying..."
+# =======================
+# START APP
+# =======================
+start_app() {
+    print_step "Starting app with PM2..."
 
-    command -v node && print_info "Node OK"
-    command -v nginx && print_info "Nginx OK"
-    command -v mongod && print_info "MongoDB OK"
-    command -v pm2 && print_info "PM2 OK"
+    if [ -f "$SRC_DIR/main.js" ]; then
+        pm2 start "$SRC_DIR/main.js" --name devops-app
+        pm2 save
+        print_info "App started"
+    else
+        print_error "main.js not found in src/"
+    fi
 }
 
-# ------------------------------------
-# Main
-# ------------------------------------
+# =======================
+# MAIN
+# =======================
 main() {
     echo "========== SETUP START =========="
-
-    if [ "$EUID" -eq 0 ]; then
-        print_error "Do not run as root"
-        exit 1
-    fi
 
     check_system
     update_system
@@ -232,20 +154,13 @@ main() {
     install_nginx
     install_mongodb
     install_pm2
-    create_directories
-    create_config_templates
+
     install_project_deps
-    verify
+    start_app
 
     echo ""
     echo "========== DONE =========="
-    echo "App directory: $APP_DIR"
-    echo "Log file: $LOG_FILE"
-    echo ""
-    echo "Next steps:"
-    echo "1. Copy your code to $APP_DIR"
-    echo "2. cd $APP_DIR && npm install"
-    echo "3. pm2 start config/ecosystem.config.js"
+    echo "App running at: http://$(curl -s ifconfig.me):3000"
 }
 
 main
