@@ -1,0 +1,50 @@
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: devops-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --eval 'db.runCommand(\"ping\").ok' --username ${MONGO_INITDB_ROOT_USERNAME} --password ${MONGO_INITDB_ROOT_PASSWORD} --authenticationDatabase admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  web:
+    image: ${IMAGE_NAME:-yourusername/devops-app}:${IMAGE_TAG:-latest}
+    container_name: devops-web
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-8080}:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - MONGO_URI=${MONGO_URI}
+      - UPLOAD_PATH=${UPLOAD_PATH}
+      - MAX_FILE_SIZE=${MAX_FILE_SIZE}
+    volumes:
+      - uploads:/app/public/uploads
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - app-network
+
+volumes:
+  mongodb_data:
+    name: ${MONGO_VOLUME:-mongodb_data}
+  uploads:
+    name: ${UPLOADS_VOLUME:-uploads}
+
+networks:
+  app-network:
+    name: devops-app-network
+    driver: bridge
