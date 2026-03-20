@@ -1,1 +1,47 @@
-node_modules
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables – chặn mọi file .env, .env.*, nhưng giữ .env.example
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Uploads (thư mục chứa file upload)
+public/uploads/
+uploads/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build outputs
+dist/
+build/
+*.tgz
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Docker ignore file (đã có trong phase3)
+.dockerignore
+
+# Các file hệ thống
+*.pid
+*.seed
+*.pid.lock
